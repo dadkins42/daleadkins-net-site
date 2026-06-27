@@ -57,8 +57,7 @@ function sectionAnnouncements(s){
   return (s.items||[]).map(a=>`<div class="announce">${escapeHTML(a.text||"")}</div>`).join("");
 }
 function sectionBlog(s){
-  if(!(s.posts||[]).length)return `<p class="empty">No posts yet.</p>`;
-  return (s.posts).map(p=>{
+  return (s.posts||[]).map(p=>{
     const body=(p.body||"").split("\n").filter(Boolean).map(x=>`<p>${escapeHTML(x)}</p>`).join("");
     const media=(p.media||[]).map(mediaHTML).join("");
     const head=`${p.date?`<span class="post-date">${escapeHTML(p.date)}</span> · `:""}${escapeHTML(p.title||"")}`;
@@ -66,14 +65,25 @@ function sectionBlog(s){
   }).join("");
 }
 function sectionAudioPlaylist(s){
-  if(!(s.items||[]).length)return `<p class="empty">Practice tracks coming soon.</p>`;
-  return (s.items).map(audioHTML).join("");
+  return (s.items||[]).map(audioHTML).join("");
+}
+
+function sectionHasContent(s){
+  switch(s.type){
+    case "announcements": return (s.items||[]).length>0;
+    case "blog":          return (s.posts||[]).length>0;
+    case "videoPlaylist": return !!(s.playlistId&&String(s.playlistId).trim());
+    case "audioPlaylist": return (s.items||[]).length>0;
+    case "coolInfo":      return (s.items||[]).length>0;
+    default: return false;
+  }
 }
 
 function renderSections(sections){
   const mount=document.getElementById("sections");
   mount.innerHTML="";
   for(const s of sections||[]){
+    if(!sectionHasContent(s))continue;
     let inner="";
     switch(s.type){
       case "announcements": inner=sectionAnnouncements(s); break;
