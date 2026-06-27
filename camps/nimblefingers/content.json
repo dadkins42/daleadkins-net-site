@@ -16,12 +16,7 @@
     {
       "title": "Videos",
       "items": [
-        { "type": "video", "title": "Adirondack Wind", "youtubeId": "" },
-        { "type": "video", "title": "Cheater C chords", "youtubeId": "" },
-        { "type": "video", "title": "Cheater G chords", "youtubeId": "" },
-        { "type": "video", "title": "Don't this road look rough and rocky — chorus", "youtubeId": "" },
-        { "type": "video", "title": "Don't this road look rough and rocky", "youtubeId": "" },
-        { "type": "video", "title": "Wildwood Flower", "youtubeId": "" }
+        { "type": "playlist", "playlistId": "PLQU7q6hbeFuw" }
       ]
     },
     {

@@ -28,9 +28,19 @@ function audioHTML(item){
   const title=item.title?`<p class="media-title">${escapeHTML(item.title)}</p>`:"";
   return `<div class="vblock">${title}<audio controls preload="none"><source src="${escapeHTML(src)}"></audio></div>`;
 }
+function playlistHTML(item){
+  const id=(item.playlistId||"").trim();
+  const embed=id
+    ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(id)}" title="${escapeHTML(item.title||"Playlist")}" allow="encrypted-media; fullscreen" allowfullscreen loading="lazy"></iframe></div>`
+    : `<div class="video"><span class="video-ph">Add a playlist ID</span></div>`;
+  const watch=id?`<a class="yt" href="https://www.youtube.com/playlist?list=${encodeURIComponent(id)}" target="_blank" rel="noopener">▶ View playlist on YouTube</a>`:"";
+  const title=item.title?`<p class="media-title">${escapeHTML(item.title)}</p>`:"";
+  return `<div class="vblock">${embed}${title}${watch}</div>`;
+}
 function itemHTML(item){
   switch(item.type){
     case "video": return videoHTML(item);
+    case "playlist": return playlistHTML(item);
     case "audio": return audioHTML(item);
     case "note":  return `<div class="note">${escapeHTML(item.text||"")}</div>`;
     case "link":  return `<a class="linkrow" href="${escapeHTML(item.url||"#")}" target="_blank" rel="noopener">${escapeHTML(item.label||item.url||"")}</a>`;
