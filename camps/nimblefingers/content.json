@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "title": "NimbleFingers",
+    "subtitle": "Sorrento, BC · Week of July 5",
+    "welcome": "Welcome, fiddlers and pickers — here's your private practice corner for the week.",
+    "headerImage": "images/header.jpg"
+  },
+  "posts": [
+    {
+      "date": "Before camp",
+      "title": "See you at Sorrento",
+      "body": "Glad to have you in class. This page is where I'll drop videos, practice tracks, and notes during and after the week — check back as we go.\nFor now, have a look at the listening list and warm up with Wildwood Flower.",
+      "media": []
+    }
+  ],
+  "sections": [
+    {
+      "title": "Videos",
+      "items": [
+        { "type": "video", "title": "Adirondack Wind", "youtubeId": "" },
+        { "type": "video", "title": "Cheater C chords", "youtubeId": "" },
+        { "type": "video", "title": "Cheater G chords", "youtubeId": "" },
+        { "type": "video", "title": "Don't this road look rough and rocky — chorus", "youtubeId": "" },
+        { "type": "video", "title": "Don't this road look rough and rocky", "youtubeId": "" },
+        { "type": "video", "title": "Wildwood Flower", "youtubeId": "" }
+      ]
+    },
+    {
+      "title": "Listening list (still adding)",
+      "items": [
+        { "type": "note", "text": "Bluegrass Album Band — all" },
+        { "type": "note", "text": "Don Rigsby & Dudley Connell — Meet Me by the Moonlight" },
+        { "type": "note", "text": "Tony Rice & Ricky Skaggs — Skaggs & Rice" },
+        { "type": "note", "text": "Norman Blake & Tony Rice" }
+      ]
+    },
+    {
+      "title": "Strum Machine",
+      "items": [
+        { "type": "link", "label": "Obligatory Waltz", "url": "" }
+      ]
+    },
+    {
+      "title": "Additional links",
+      "items": [
+        { "type": "link", "label": "Swing & old-time rhythm", "url": "" },
+        { "type": "link", "label": "Smoosh chord sequence & other things", "url": "" }
+      ]
+    }
+  ]
+}
