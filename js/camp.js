@@ -1,11 +1,9 @@
 // Camp page renderer. Reads content.json and builds the page.
 // The editor (DropPost-style) writes content.json; this script only displays it.
+// Sections are TYPED — each type has its own render here and its own edit form in the app.
 
 function escapeHTML(s){return String(s??"").replace(/[&<>"']/g,c=>(
   {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-
-function el(tag,cls,html){const n=document.createElement(tag);
-  if(cls)n.className=cls; if(html!==undefined)n.innerHTML=html; return n;}
 
 async function loadJSON(path){
   const res=await fetch(path,{cache:"no-store"});
@@ -13,7 +11,7 @@ async function loadJSON(path){
   return res.json();
 }
 
-// ---- media (shared by posts + sections) --------------------------------
+// ---- media (used inside blog posts and where needed) -------------------
 function videoHTML(item){
   const id=(item.youtubeId||"").trim();
   const embed=id
@@ -24,71 +22,82 @@ function videoHTML(item){
   return `<div class="vblock">${embed}${title}${watch}</div>`;
 }
 function audioHTML(item){
-  const src=item.url||"";
   const title=item.title?`<p class="media-title">${escapeHTML(item.title)}</p>`:"";
-  return `<div class="vblock">${title}<audio controls preload="none"><source src="${escapeHTML(src)}"></audio></div>`;
+  return `<div class="vblock">${title}<audio controls preload="none"><source src="${escapeHTML(item.url||"")}"></audio></div>`;
 }
-function playlistHTML(item){
-  const id=(item.playlistId||"").trim();
+function playlistHTML(id,title){
+  id=(id||"").trim();
   const embed=id
-    ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(id)}" title="${escapeHTML(item.title||"Playlist")}" allow="encrypted-media; fullscreen" allowfullscreen loading="lazy"></iframe></div>`
+    ? `<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=${encodeURIComponent(id)}" title="${escapeHTML(title||"Playlist")}" allow="encrypted-media; fullscreen" allowfullscreen loading="lazy"></iframe></div>`
     : `<div class="video"><span class="video-ph">Add a playlist ID</span></div>`;
   const watch=id?`<a class="yt" href="https://www.youtube.com/playlist?list=${encodeURIComponent(id)}" target="_blank" rel="noopener">▶ View playlist on YouTube</a>`:"";
-  const title=item.title?`<p class="media-title">${escapeHTML(item.title)}</p>`:"";
-  return `<div class="vblock">${embed}${title}${watch}</div>`;
+  return `<div class="vblock">${embed}${watch}</div>`;
 }
-function itemHTML(item){
+function mediaHTML(m){
+  if(m.type==="video")return videoHTML(m);
+  if(m.type==="audio")return audioHTML(m);
+  if(m.type==="playlist")return playlistHTML(m.playlistId,m.title);
+  return "";
+}
+
+// ---- cool-info items (heading / note / link / media) ------------------
+function coolItemHTML(item){
   switch(item.type){
-    case "video": return videoHTML(item);
-    case "playlist": return playlistHTML(item);
-    case "audio": return audioHTML(item);
-    case "note":  return `<div class="note">${escapeHTML(item.text||"")}</div>`;
-    case "link":  return `<a class="linkrow" href="${escapeHTML(item.url||"#")}" target="_blank" rel="noopener">${escapeHTML(item.label||item.url||"")}</a>`;
+    case "heading": return `<p class="cool-h">${escapeHTML(item.text||"")}</p>`;
+    case "note":    return `<div class="note">${escapeHTML(item.text||"")}</div>`;
+    case "link":    return `<a class="linkrow" href="${escapeHTML(item.url||"#")}" target="_blank" rel="noopener">${escapeHTML(item.label||item.url||"")}</a>`;
+    case "video":   return videoHTML(item);
+    case "audio":   return audioHTML(item);
     default: return "";
   }
 }
 
-// ---- sections ----------------------------------------------------------
-function renderHeader(meta){
-  const hero=document.getElementById("hero");
-  if(meta.headerImage)hero.style.backgroundImage=`url('${meta.headerImage}')`;
-  document.getElementById("hero-title").textContent=meta.title||"";
-  const sub=document.getElementById("hero-sub");
-  if(meta.subtitle){sub.textContent=meta.subtitle;}else{sub.style.display="none";}
-  const w=document.getElementById("welcome");
-  if(meta.welcome){w.textContent=meta.welcome;} else {w.style.display="none";}
-  if(meta.title)document.title=meta.title;
+// ---- section types ----------------------------------------------------
+function sectionAnnouncements(s){
+  return (s.items||[]).map(a=>`<div class="announce">${escapeHTML(a.text||"")}</div>`).join("");
 }
-
-function renderPosts(posts){
-  const mount=document.getElementById("posts");
-  if(!posts||!posts.length){mount.style.display="none";return;}
-  mount.innerHTML=`<h2>Latest</h2>`;
-  for(const p of posts){
+function sectionBlog(s){
+  if(!(s.posts||[]).length)return `<p class="empty">No posts yet.</p>`;
+  return (s.posts).map(p=>{
     const body=(p.body||"").split("\n").filter(Boolean).map(x=>`<p>${escapeHTML(x)}</p>`).join("");
-    const media=(p.media||[]).map(itemHTML).join("");
-    mount.appendChild(el("div","card",
-      `${p.date?`<p class="post-date">${escapeHTML(p.date)}</p>`:""}`+
-      `${p.title?`<p class="post-title">${escapeHTML(p.title)}</p>`:""}`+
-      `<div class="post-body">${body}</div>${media}`));
-  }
+    const media=(p.media||[]).map(mediaHTML).join("");
+    const head=`${p.date?`<span class="post-date">${escapeHTML(p.date)}</span> · `:""}${escapeHTML(p.title||"")}`;
+    return `<details class="post"><summary>${head}</summary><div class="post-body">${body}${media}</div></details>`;
+  }).join("");
+}
+function sectionAudioPlaylist(s){
+  if(!(s.items||[]).length)return `<p class="empty">Practice tracks coming soon.</p>`;
+  return (s.items).map(audioHTML).join("");
 }
 
 function renderSections(sections){
   const mount=document.getElementById("sections");
   mount.innerHTML="";
   for(const s of sections||[]){
-    mount.appendChild(el("h2",null,escapeHTML(s.title||"")));
-    const box=el("div");
-    for(const item of s.items||[])box.insertAdjacentHTML("beforeend",itemHTML(item));
-    mount.appendChild(box);
+    let inner="";
+    switch(s.type){
+      case "announcements": inner=sectionAnnouncements(s); break;
+      case "blog":          inner=sectionBlog(s); break;
+      case "videoPlaylist": inner=playlistHTML(s.playlistId,s.title); break;
+      case "audioPlaylist": inner=sectionAudioPlaylist(s); break;
+      case "coolInfo":      inner=(s.items||[]).map(coolItemHTML).join(""); break;
+      default: inner="";
+    }
+    if(s.title)mount.insertAdjacentHTML("beforeend",`<h2>${escapeHTML(s.title)}</h2>`);
+    mount.insertAdjacentHTML("beforeend",`<div class="section">${inner}</div>`);
   }
+}
+
+function renderHeader(meta){
+  const hero=document.getElementById("hero");
+  if(meta.headerImage)hero.style.backgroundImage=`url('${meta.headerImage}')`;
+  document.getElementById("hero-title").textContent=meta.title||"";
+  if(meta.title)document.title=meta.title;
 }
 
 async function render(){
   const data=await loadJSON("content.json");
   renderHeader(data.meta||{});
-  renderPosts(data.posts||[]);
   renderSections(data.sections||[]);
 }
 

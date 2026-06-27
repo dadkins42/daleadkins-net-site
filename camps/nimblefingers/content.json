@@ -1,42 +1,50 @@
 {
   "meta": {
     "title": "NimbleFingers 2026",
-    "welcome": "WELCOME — I am so excited about this week! This site contains resources to help you keep going months after camp.",
     "headerImage": "images/header.jpg"
   },
-  "posts": [
-    {
-      "date": "Before camp",
-      "title": "Before we begin",
-      "body": "Glad to have you in class. This page is where I'll drop videos, practice tracks, and notes — during the week and well after. Come back to it for months; that's the whole point.\nFor now, have a look at the listening list and warm up with Wildwood Flower.",
-      "media": []
-    }
-  ],
   "sections": [
     {
-      "title": "Videos",
+      "type": "announcements",
+      "title": "Announcements",
       "items": [
-        { "type": "playlist", "playlistId": "PLQU7q6hbeFuw" }
+        { "text": "Welcome to NimbleFingers 26!" }
       ]
     },
     {
-      "title": "Listening list (still adding)",
+      "type": "blog",
+      "title": "Blog",
+      "posts": [
+        {
+          "date": "Jul 6",
+          "title": "Wildwood Flower — slow run-through",
+          "body": "Today's slow version is up in the Videos playlist. Aim for clean, even downstrokes before you add any speed — accuracy first.",
+          "media": []
+        }
+      ]
+    },
+    {
+      "type": "videoPlaylist",
+      "title": "Videos",
+      "playlistId": "PLQU7q6hbeFuw"
+    },
+    {
+      "type": "audioPlaylist",
+      "title": "Audio",
+      "items": []
+    },
+    {
+      "type": "coolInfo",
+      "title": "Cool info",
       "items": [
+        { "type": "heading", "text": "Listening list (still adding)" },
         { "type": "note", "text": "Bluegrass Album Band — all" },
         { "type": "note", "text": "Don Rigsby & Dudley Connell — Meet Me by the Moonlight" },
         { "type": "note", "text": "Tony Rice & Ricky Skaggs — Skaggs & Rice" },
-        { "type": "note", "text": "Norman Blake & Tony Rice" }
-      ]
-    },
-    {
-      "title": "Strum Machine",
-      "items": [
-        { "type": "link", "label": "Obligatory Waltz", "url": "" }
-      ]
-    },
-    {
-      "title": "Additional links",
-      "items": [
+        { "type": "note", "text": "Norman Blake & Tony Rice" },
+        { "type": "heading", "text": "Strum Machine" },
+        { "type": "link", "label": "Obligatory Waltz", "url": "" },
+        { "type": "heading", "text": "Links" },
         { "type": "link", "label": "Swing & old-time rhythm", "url": "" },
         { "type": "link", "label": "Smoosh chord sequence & other things", "url": "" }
       ]
