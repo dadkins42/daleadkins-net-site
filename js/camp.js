@@ -105,28 +105,33 @@ function renderHeader(meta){
   if(meta.title)document.title=meta.title;
 }
 
-async function render(){
-  const data=await loadJSON("content.json");
+function renderAll(data){
   renderHeader(data.meta||{});
   renderSections(data.sections||[]);
 }
 
-// ---- gate (PLACEHOLDER protection — encrypt with StatiCrypt before real content) ----
+// ---- gate: each page's own password lives in its content.json (meta.password).
+// Cosmetic ("feel special"), since the JSON is public — but per-page now. ----
 (function(){
-  const PW="nimblefingers26";
   const gate=document.getElementById("gate"),content=document.getElementById("content"),
         pw=document.getElementById("pw"),go=document.getElementById("go"),msg=document.getElementById("msg");
-  let rendered=false;
-  async function unlock(){
-    gate.style.display="none";content.style.display="block";
-    try{sessionStorage.setItem("nf","1");}catch(e){}
-    if(!rendered){rendered=true; try{await render();}catch(e){msg.textContent="Couldn’t load content.";}}
+  const key="nf-"+location.pathname;
+  let data=null, rendered=false;
+  async function ensureData(){ if(!data) data=await loadJSON("content.json"); return data; }
+  function reveal(){
+    gate.style.display="none"; content.style.display="block";
+    try{ sessionStorage.setItem(key,"1"); }catch(e){}
+    if(!rendered){ rendered=true; renderAll(data); }
   }
-  function tryit(){
-    if((pw.value||"").toLowerCase().replace(/\s/g,"")===PW)unlock();
+  async function tryit(){
+    let d;
+    try { d=await ensureData(); } catch(e){ msg.textContent="Couldn’t load this page."; return; }
+    const want=String((d.meta&&d.meta.password)||"").toLowerCase().replace(/\s/g,"");
+    const got=(pw.value||"").toLowerCase().replace(/\s/g,"");
+    if(want && got===want) reveal();
     else msg.textContent="Hmm, that password didn’t work — check your welcome email.";
   }
   go.addEventListener("click",tryit);
-  pw.addEventListener("keydown",e=>{if(e.key==="Enter")tryit();});
-  try{if(sessionStorage.getItem("nf")==="1")unlock();}catch(e){}
+  pw.addEventListener("keydown",e=>{ if(e.key==="Enter")tryit(); });
+  (async()=>{ try{ if(sessionStorage.getItem(key)==="1"){ await ensureData(); reveal(); } }catch(e){} })();
 })();
