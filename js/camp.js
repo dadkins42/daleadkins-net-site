@@ -43,7 +43,8 @@ function renderHeader(meta){
   const hero=document.getElementById("hero");
   if(meta.headerImage)hero.style.backgroundImage=`url('${meta.headerImage}')`;
   document.getElementById("hero-title").textContent=meta.title||"";
-  document.getElementById("hero-sub").textContent=meta.subtitle||"";
+  const sub=document.getElementById("hero-sub");
+  if(meta.subtitle){sub.textContent=meta.subtitle;}else{sub.style.display="none";}
   const w=document.getElementById("welcome");
   if(meta.welcome){w.textContent=meta.welcome;} else {w.style.display="none";}
   if(meta.title)document.title=meta.title;
