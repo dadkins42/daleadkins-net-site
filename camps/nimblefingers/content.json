@@ -14,14 +14,7 @@
     {
       "type": "blog",
       "title": "Blog",
-      "posts": [
-        {
-          "date": "Jul 6",
-          "title": "Wildwood Flower — slow run-through",
-          "body": "Today's slow version is up in the Videos playlist. Aim for clean, even downstrokes before you add any speed — accuracy first.",
-          "media": []
-        }
-      ]
+      "posts": []
     },
     {
       "type": "videoPlaylist",
